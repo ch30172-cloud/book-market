@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+enum Category {
+  TEXTBOOK
+  READING
+  RELIGIOUS
+}
+enum Condition {
+  NEW
+  GOOD
+  USED
+  WRITTEN_IN
+}
+enum Status {
+  PENDING
+  ACTIVE
+  SOLD
+  EXPIRED
+  REMOVED
+}
+model Listing {
+  id String @id @default(cuid())
+  title String
+  authorPublisher String? @map("author_publisher")
+  category Category
+  institution String?
+  grade String?
+  condition Condition
+  price Int?
+  city String
+  neighborhood String?
+  phone String
+  isbn String?
+  images Image[]
+  status Status @default(PENDING)
+  verifiedAt DateTime? @map("verified_at")
+  suspicious Boolean @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime @map("expires_at")
+  expiryNotifiedAt DateTime?
+  manageToken String @unique @map("manage_token")
+  reports Report[]
+  otp OtpChallenge?
+  @@index([status, expiresAt, createdAt])
+  @@index([phone, status])
+}
+model Image {
+  id String @id @default(cuid())
+  path String @unique
+  listingId String
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+model Report {
+  id String @id @default(cuid())
+  listingId String @map("listing_id")
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  reason String
+  createdAt DateTime @default(now()) @map("created_at")
+  handled Boolean @default(false)
+  @@index([handled, createdAt])
+}
+model BlockedPhone {
+  phone String @id
+  reason String
+}
+model OtpChallenge {
+  id String @id @default(cuid())
+  listingId String @unique
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  digest String
+  expiresAt DateTime
+  attempts Int @default(0)
+  consumed Boolean @default(false)
+}
+model RateBucket {
+  key String @id
+  count Int @default(1)
+  expiresAt DateTime
+  @@index([expiresAt])
+}
+model Wanted {
+  id String @id @default(cuid())
+  phone String
+  keywords String
+  createdAt DateTime @default(now())
+}

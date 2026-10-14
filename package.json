@@ -1,0 +1,40 @@
+{
+  "name": "sefer-hozer",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build",
+    "start": "next start --hostname 0.0.0.0",
+    "db:generate": "prisma generate",
+    "db:push": "node scripts/db-push.mjs",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:postgres": "node scripts/sync-postgres-schema.mjs && prisma generate --schema prisma/schema.postgres.prisma",
+    "test": "tsx --test tests/*.test.ts",
+    "test:integration": "node scripts/test-integration.mjs",
+    "test:smoke": "node scripts/smoke.mjs",
+    "typecheck": "tsc --noEmit",
+    "expire": "tsx scripts/expire.ts"
+  },
+  "dependencies": {
+    "next": "^16.4.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "@prisma/client": "6.19.3",
+    "sharp": "^0.35.5",
+    "zod": "^4.6.7"
+  },
+  "overrides": {
+    "deepmerge-ts": "^8.0.0"
+  },
+  "devDependencies": {
+    "prisma": "6.19.3",
+    "typescript": "^5.9.3",
+    "tsx": "^4.21.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "tailwindcss": "^4.2.0",
+    "@tailwindcss/postcss": "^4.2.0"
+  }
+}
